@@ -1,0 +1,6 @@
+Plant,Type,Treatment,conc,uptake
+Ff1,Foo,nonchilled,95,20
+Ff1,Foo,nonchilled,175,30
+Ff1,Foo,nonchilled,250,35
+Bb1,Bar,chilled,95,10
+Bb2,Bar,chilled,250,7

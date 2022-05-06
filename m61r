@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# paste function
+# https://stackoverflow.com/questions/1527049/how-can-i-join-elements-of-an-array-in-bash#17841619
+function paste { local IFS="$1"; shift; echo "$*"; }
+
+# parse and usage
+# https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+# https://gist.github.com/hfossli/4368aa5a577742c3c9f9266ed214aa58
+function usage() {
+  CLEAR='\033[0m'
+  RED='\033[0;31m'
+  if [ -n "$1" ]; then
+    echo -e "${RED}👉 $1${CLEAR}\n";
+  fi
+  echo "Usage: $0 [-i input] [-e extra] [-c combine] [-p param] [-m manip] [-a arguments] [-o output]"
+  echo "  -i, --input    Input file"
+  echo "  -e, --extra    Extra file"
+  echo "  -c, --combine  Input combination"
+  echo "  -p, --param    Parameters regarding the combination"
+  echo "  -m, --manip    Data manipulation"
+  echo "  -a, --argument Arguments regarding the manipulation"
+  echo "  -o, --output   Type of output"
+  echo "  -h, --help     Help"
+  echo ""
+  echo "Example: $0 -i CO2.csv -i CO2b.csv -c rbind -m filter -a \"~Type=='Quebec'\" --output x"
+  exit 1
+}
+
+# parse params
+while [[ "$#" > 0 ]]; do case $1 in
+  -i|--input) INPUT+=($2); shift;shift;;
+  -i|--extra) EXTRA+=($2); shift;shift;;
+  -c|--combine) COMBINE=$2; shift;shift;;
+  -p|--param) PARAM+=($2) ; shift;shift;;
+  -m|--manip) MANIP=$2; shift;shift;;
+  -a|--argument) ARGUMENT+=($2) ; shift;shift;;
+  -o|--output) OUTPUT="$2"; shift;shift;;
+  -h|--help) usage; shift;shift;;
+  *) usage "Unknown parameter passed: $1"; shift; shift;;
+esac; done
+
+# empty args
+if [ -z "$INPUT" ]; then
+  INPUT="NULL"
+  PIPED=$(</dev/stdin)
+else
+  PIPED="NULL"
+fi;
+if [ -z "$EXTRA" ]; then EXTRA="NULL"; fi;
+if [ -z "$COMBINE" ]; then COMBINE="NULL"; fi;
+if [ -z "$PARAM" ]; then PARAM="NULL"; fi;
+if [ -z "$MANIP" ]; then MANIP="NULL"; fi;
+if [ -z "$ARGUMENT" ]; then ARGUMENT="NULL"; fi;
+if [ -z "$OUTPUT" ]; then OUTPUT="NULL"; fi;
+
+# args of length > 1
+if [ "${#INPUT}" -gt 1 ]; then INPUT=$(paste , ${INPUT[@]}); fi;
+if [ "${#EXTRA}" -gt 1 ]; then EXTRA=$(paste , ${EXTRA[@]}); fi;
+if [ "${#PIPED}" -gt 1 ]; then PIPED=$(paste , ${PIPED[@]}); fi;
+if [ "${#PARAM}" -gt 1 ]; then PARAM=$(paste , ${PARAM[@]}); fi;
+if [ "${#ARGUMENT}" -gt 1 ]; then ARGUMENT=$(paste , ${ARGUMENT[@]}); fi;
+
+Rscript m61r.r $PIPED $INPUT $EXTRA $COMBINE $PARAM $MANIP $ARGUMENT $OUTPUT
