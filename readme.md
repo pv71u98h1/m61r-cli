@@ -4,7 +4,7 @@ Data manipulation in command line with use of pipes.
 
 `m61r-cli` runs with R-package [`m61r`](https://github.com/pv71u98h1/m61r), `Rscript` and `shell` to manipulate `csv` and `rds` files.
 
-Motivation was not dealing with large dataset. Instead, I was looking for a simple CLI tool to quickly manipulate data without having to install several packages.
+Motivation was not dealing with large datasets. Instead, I was looking for a simple CLI tool to quickly manipulate data without having to install several packages.
 
 Why with `R`? Because I will test with other languages as well.
 
